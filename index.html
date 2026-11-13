@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080b0a">
+    <title>ÔNIX Downloader</title>
+    <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px 14px;
+  background: #080b0a;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 500px;
+  margin: 25px auto;
+  background: #141b18;
+  padding: 22px;
+  border-radius: 18px;
+  border: 1px solid #263a30;
+}
+
+.logo {
+  text-align: center;
+  font-size: 29px;
+  font-weight: bold;
+  color: #00e69a;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #aab8b0;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+h3 {
+  color: #00e69a;
+  font-size: 15px;
+  margin-top: 24px;
+}
+
+input {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  background: #080d0b;
+  border: 1px solid #34483d;
+  color: white;
+  border-radius: 9px;
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #00e69a;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 10px;
+  background: #00e69a;
+  color: #07130d;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+.video {
+  margin-top: 20px;
+}
+
+iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: none;
+  border-radius: 10px;
+}
+
+.download {
+  background: #075d40;
+  color: white;
+  margin-top: 12px;
+}
+
+.download:disabled {
+  opacity: .4;
+}
+
+.status {
+  color: #00e69a;
+  text-align: center;
+  font-size: 13px;
+  margin-top: 15px;
+}
+
+.footer {
+  text-align: center;
+  color: #75847b;
+  font-size: 11px;
+  margin-top: 25px;
+}
+</style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">ÔNIX DOWNLOADER</div>
+      <div class="subtitle">
+        Sua central de mídia
+      </div>
+      <h3>01. LINK DO YOUTUBE</h3>
+      <input
+      type="url"
+      id="youtube"
+      placeholder="Cole o link do YouTube aqui"
+      >
+      <button onclick="analisar()">
+        ANALISAR LINK
+      </button>
+      <div class="video" id="player">
+      </div>
+      <h3>02. DOWNLOAD DE ÁUDIO</h3>
+      <input
+      type="url"
+      id="audio"
+      placeholder="Link direto do arquivo de áudio"
+      >
+      <button class="download" onclick="baixar('audio')">
+        ↓ BAIXAR ÁUDIO
+      </button>
+      <h3>03. DOWNLOAD DE VÍDEO</h3>
+      <input
+      type="url"
+      id="video"
+      placeholder="Link direto do arquivo de vídeo"
+      >
+      <button class="download" onclick="baixar('video')">
+        ↓ BAIXAR VÍDEO
+      </button>
+      <div class="status" id="status">
+      </div>
+      <div class="footer">
+        ÔNIX DOWNLOADER © 2026
+      </div>
+    </div>
+    <script>
+
+function analisar() {
+
+  const link = document.getElementById("youtube").value.trim();
+
+  let id = "";
+
+  try {
+
+    const url = new URL(link);
+
+    if (url.hostname === "youtu.be") {
+      id = url.pathname.split("/")[1];
+    }
+
+    else if (
+      url.hostname === "youtube.com" ||
+      url.hostname.endsWith(".youtube.com")
+    ) {
+
+      id = url.searchParams.get("v") || "";
+
+      if (!id) {
+        const partes = url.pathname.split("/");
+        if (["shorts", "embed", "live"].includes(partes[1])) {
+          id = partes[2] || "";
+        }
+      }
+    }
+
+  } catch(e) {
+    id = "";
+  }
+
+  if (!/^[a-zA-Z0-9_-]{11}$/.test(id)) {
+    alert("Insira um link válido do YouTube.");
+    return;
+  }
+
+  document.getElementById("player").innerHTML =
+    `<iframe
+      src="https://www.youtube-nocookie.com/embed/${id}"
+      allowfullscreen
+      loading="lazy">
+    </iframe>`;
+
+  document.getElementById("status").textContent =
+    "Vídeo carregado com sucesso!";
+
+}
+
+function baixar(tipo) {
+
+  const campo = document.getElementById(tipo);
+  const link = campo.value.trim();
+
+  try {
+
+    const url = new URL(link);
+
+    if (!["http:", "https:"].includes(url.protocol)) {
+      throw new Error();
+    }
+
+    // Abre o arquivo autorizado.
+    // O navegador ou servidor determina o comportamento
+    // de download conforme os cabeçalhos disponíveis.
+
+    window.open(url.href, "_blank", "noopener,noreferrer");
+
+    document.getElementById("status").textContent =
+      "Link de download aberto.";
+
+  } catch(e) {
+
+    alert("Insira um endereço de arquivo válido.");
+
+  }
+
+}
+
+</script>
+  </body>
+</html>
