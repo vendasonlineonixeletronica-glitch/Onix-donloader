@@ -199,13 +199,13 @@ function analisar() {
     return;
   }
 
-  document.getElementById("player").innerHTML =
+ document.getElementById("player").innerHTML =
     `<iframe
       src="https://www.youtube-nocookie.com/embed/${id}"
+      referrerpolicy="strict-origin-when-cross-origin"
       allowfullscreen
       loading="lazy">
     </iframe>`;
-
   document.getElementById("status").textContent =
     "Vídeo carregado com sucesso!";
 
